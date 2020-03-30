@@ -8,16 +8,22 @@ AVRPawn::AVRPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	root = CreateDefaultSubobject<UBoxComponent>("VRPawnRoot");
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	RootComponent = Camera;
+	RootComponent = root;
 	LeftHandController = CreateDefaultSubobject<UMotionControllerComponent>("Left Hand");
 	RightHandController = CreateDefaultSubobject<UMotionControllerComponent>("Right Hand");
-	LeftHandController->SetupAttachment(Camera);
-	RightHandController->SetupAttachment(Camera);
+	LeftHandController->SetupAttachment(root);
+	RightHandController->SetupAttachment(root);
+	Camera->SetupAttachment(root);
 
 	//show the model for the hands
 	LeftHandController->SetShowDeviceModel(true);
 	RightHandController->SetShowDeviceModel(true);
+
+	//Set the input source for the left and right hands
+	LeftHandController->SetTrackingMotionSource("Left");
+	RightHandController->SetTrackingMotionSource("Right");
 }
 
 // Called when the game starts or when spawned

@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
 #include "MotionControllerComponent.h"
+#include "Components/BoxComponent.h"
 #include "VRPawn.generated.h"
 
 UCLASS()
@@ -36,4 +37,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMotionControllerComponent* RightHandController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* root;
 };
