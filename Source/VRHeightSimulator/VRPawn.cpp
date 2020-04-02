@@ -2,6 +2,7 @@
 
 
 #include "VRPawn.h"
+#include "Runtime/HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -30,7 +31,10 @@ AVRPawn::AVRPawn()
 void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	//set tracking origin
+	//Note:: be sure to set this pawn to be auto-possessed by player 0!
+	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 }
 
 // Called every frame
