@@ -100,14 +100,6 @@
 		{
 			"name": "/actions/main/in/MotionControllerThumbRight_X,MotionControllerThumbRight_Y X Y_axis2d",
 			"type": "vector2"
-		},
-		{
-			"name": "/actions/main/in/VREditor_TriggerL axis",
-			"type": "vector1"
-		},
-		{
-			"name": "/actions/main/in/VREditor_TriggerR axis",
-			"type": "vector1"
 		}
 	],
 	"action_sets": [
@@ -230,8 +222,6 @@
 			"/actions/main/in/GrabRight": "GrabRight",
 			"/actions/main/in/MotionControllerThumbLeft_X,MotionControllerThumbLeft_Y X Y_axis2d": "MotionControllerThumbLeft",
 			"/actions/main/in/MotionControllerThumbRight_X,MotionControllerThumbRight_Y X Y_axis2d": "MotionControllerThumbRight",
-			"/actions/main/in/VREditor_TriggerL axis": "VREditor_TriggerL",
-			"/actions/main/in/VREditor_TriggerR axis": "VREditor_TriggerR",
 			"/actions/main": "Main Game Actions"
 		}
 	]

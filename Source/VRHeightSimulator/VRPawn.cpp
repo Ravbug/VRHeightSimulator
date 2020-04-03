@@ -49,5 +49,67 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	//connect the controller events to the methods of this class
+	PlayerInputComponent->BindAction("GrabLeft", IE_Pressed, this, &AVRPawn::VRControllerGrabLeft);
+	PlayerInputComponent->BindAction("GrabRight", IE_Pressed, this, &AVRPawn::VRControllerGrabRight);
+	PlayerInputComponent->BindAction("GrabLeft", IE_Released, this, &AVRPawn::VRControllerReleaseLeft);
+	PlayerInputComponent->BindAction("GrabRight", IE_Released, this, &AVRPawn::VRControllerReleaseRight);
+
+	PlayerInputComponent->BindAction("TeleportLeft", IE_Released, this, &AVRPawn::VRControllerRequestTeleportLeft);
+	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerRequestTeleportRight);
+	PlayerInputComponent->BindAction("TeleportLeft", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportLeft);
+	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
 }
 
+void AVRPawn::VRControllerStartTeleport(UMotionControllerComponent* controller) {
+	
+}
+
+void AVRPawn::VRControllerEndTeleport(UMotionControllerComponent* controller) {
+	SetActorLocation(FVector(0,-1000,0));
+	UE_LOG(LogTemp, Warning, TEXT("c tp"));
+
+}
+
+void AVRPawn::VRControllerStartGrab(UMotionControllerComponent* controller) {
+
+}
+
+void AVRPawn::VRControllerEndGrab(UMotionControllerComponent* controller) {
+
+}
+
+
+void AVRPawn::VRControllerGrabLeft() {
+	UE_LOG(LogTemp, Warning, TEXT("Grab left!"));
+	VRControllerStartGrab(LeftHandController);
+}
+
+void AVRPawn::VRControllerGrabRight() {
+	UE_LOG(LogTemp, Warning, TEXT("Grab right!"));
+	VRControllerStartGrab(RightHandController);
+}
+
+void AVRPawn::VRControllerReleaseLeft() {
+	UE_LOG(LogTemp, Warning, TEXT("Release left!"));
+	VRControllerEndGrab(LeftHandController);
+}
+
+void AVRPawn::VRControllerReleaseRight() {
+	UE_LOG(LogTemp, Warning, TEXT("Release right!"));
+	VRControllerEndGrab(RightHandController);
+}
+
+void AVRPawn::VRControllerRequestTeleportRight() {
+	VRControllerStartTeleport(RightHandController);
+}
+void AVRPawn::VRControllerRequestTeleportLeft() {
+	VRControllerStartTeleport(LeftHandController);
+}
+void AVRPawn::VRControllerConfirmTeleportRight() {
+	VRControllerEndTeleport(RightHandController);
+
+}
+void AVRPawn::VRControllerConfirmTeleportLeft() {
+	VRControllerEndTeleport(LeftHandController);
+}
