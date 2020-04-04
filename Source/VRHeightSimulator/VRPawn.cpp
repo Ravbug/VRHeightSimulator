@@ -3,6 +3,8 @@
 
 #include "VRPawn.h"
 #include "Runtime/HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -42,6 +44,20 @@ void AVRPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//request teleport
+	if (isLeftRequesting == TeleportStatus::Request) {
+		VRControllerStartTeleport(LeftHandController);
+	}
+	else if (isRightRequesting == TeleportStatus::Request) {
+		VRControllerStartTeleport(RightHandController);
+	}
+
+	//confirm teleport
+	if ((isLeftRequesting == TeleportStatus::Confirm || isRightRequesting == TeleportStatus::Confirm)) {
+		VRControllerEndTeleport(teleportTarget);
+		isLeftRequesting = isRightRequesting = TeleportStatus::None;
+	}
+
 }
 
 // Called to bind functionality to input
@@ -55,20 +71,38 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("GrabLeft", IE_Released, this, &AVRPawn::VRControllerReleaseLeft);
 	PlayerInputComponent->BindAction("GrabRight", IE_Released, this, &AVRPawn::VRControllerReleaseRight);
 
-	PlayerInputComponent->BindAction("TeleportLeft", IE_Released, this, &AVRPawn::VRControllerRequestTeleportLeft);
-	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerRequestTeleportRight);
+	PlayerInputComponent->BindAction("TeleportLeft", IE_Pressed, this, &AVRPawn::VRControllerRequestTeleportLeft);
+	PlayerInputComponent->BindAction("TeleportRight", IE_Pressed, this, &AVRPawn::VRControllerRequestTeleportRight);
 	PlayerInputComponent->BindAction("TeleportLeft", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportLeft);
 	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
 }
 
 void AVRPawn::VRControllerStartTeleport(UMotionControllerComponent* controller) {
+	FHitResult hitpos;
+	TArray<FVector> OutPath;
+	FVector lastTrace;
+	FVector LaunchVelocity(controller->GetForwardVector() * 900);
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Init(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic),1);
+
+	if (UGameplayStatics::Blueprint_PredictProjectilePath_ByObjectType(GetWorld(), hitpos, OutPath, lastTrace, controller->GetComponentLocation(),
+		LaunchVelocity, true, 0.0, ObjectTypes, false, TArray<AActor*>(), EDrawDebugTrace::ForOneFrame, 1.0, 30.0, 2.0, 0.0)) {
+		
+		teleportTarget = hitpos.Location;
+		DrawDebugSphere(GetWorld(),hitpos.Location,5,2,FColor::Red);
+	}
+	else {
+		teleportTarget = FVector::ZeroVector;
+	}
+
 	
 }
 
-void AVRPawn::VRControllerEndTeleport(UMotionControllerComponent* controller) {
-	SetActorLocation(FVector(0,-1000,0));
-	UE_LOG(LogTemp, Warning, TEXT("c tp"));
-
+void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
+	if (newPos != FVector::ZeroVector) {
+		//TODO: set camera fade time
+		SetActorLocation(newPos);
+	}
 }
 
 void AVRPawn::VRControllerStartGrab(UMotionControllerComponent* controller) {
@@ -101,15 +135,15 @@ void AVRPawn::VRControllerReleaseRight() {
 }
 
 void AVRPawn::VRControllerRequestTeleportRight() {
-	VRControllerStartTeleport(RightHandController);
+	isRightRequesting = TeleportStatus::Request;
 }
 void AVRPawn::VRControllerRequestTeleportLeft() {
-	VRControllerStartTeleport(LeftHandController);
+	isLeftRequesting = TeleportStatus::Request;
 }
 void AVRPawn::VRControllerConfirmTeleportRight() {
-	VRControllerEndTeleport(RightHandController);
+	isRightRequesting = TeleportStatus::Confirm;
 
 }
 void AVRPawn::VRControllerConfirmTeleportLeft() {
-	VRControllerEndTeleport(LeftHandController);
+	isLeftRequesting = TeleportStatus::Confirm;
 }

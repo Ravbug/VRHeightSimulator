@@ -41,10 +41,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* root;
 
-	void VRControllerStartTeleport(UMotionControllerComponent* controller);
-	void VRControllerEndTeleport(UMotionControllerComponent* controller);
-	void VRControllerStartGrab(UMotionControllerComponent* controller);
-	void VRControllerEndGrab(UMotionControllerComponent* controller);
+	void VRControllerStartTeleport(UMotionControllerComponent*);
+	void VRControllerEndTeleport(const FVector&);
+	void VRControllerStartGrab(UMotionControllerComponent*);
+	void VRControllerEndGrab(UMotionControllerComponent*);
 
 	//VR Controller input events
 	//see the Input tab of the Project Settings -> Input to see where these are defined
@@ -59,4 +59,11 @@ public:
 	void VRControllerRequestTeleportLeft();
 	void VRControllerConfirmTeleportRight();
 	void VRControllerConfirmTeleportLeft();
+
+private:
+	enum TeleportStatus {None,Request,Confirm};
+	TeleportStatus isLeftRequesting, isRightRequesting;
+
+	//cannot teleport to the origin
+	FVector teleportTarget = FVector::ZeroVector;
 };
