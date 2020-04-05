@@ -66,4 +66,5 @@ private:
 
 	//cannot teleport to the origin
 	FVector teleportTarget = FVector::ZeroVector;
+	const int TeleportMaxProjectionDistance = 10;
 };

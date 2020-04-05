@@ -4,6 +4,9 @@
 #include "VRPawn.h"
 #include "Runtime/HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "AI/NavigationSystemBase.h"
+#include "NavigationSystem.h"
+#include "NavFilters/NavigationQueryFilter.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -85,11 +88,25 @@ void AVRPawn::VRControllerStartTeleport(UMotionControllerComponent* controller) 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Init(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic),1);
 
+	//predict a projectile to find arc teleport position
 	if (UGameplayStatics::Blueprint_PredictProjectilePath_ByObjectType(GetWorld(), hitpos, OutPath, lastTrace, controller->GetComponentLocation(),
 		LaunchVelocity, true, 0.0, ObjectTypes, false, TArray<AActor*>(), EDrawDebugTrace::ForOneFrame, 1.0, 30.0, 2.0, 0.0)) {
-		
-		teleportTarget = hitpos.Location;
-		DrawDebugSphere(GetWorld(),hitpos.Location,5,2,FColor::Red);
+
+		FVector projectedPoint;
+		//determine if the hit point is on the nav mesh by projecting the current point to the navmesh
+		UNavigationSystemV1* navSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(this);
+		ANavigationData* navData = navSystem->GetNavDataForProps(GetNavAgentPropertiesRef());
+		TSubclassOf<UNavigationQueryFilter> FilterClass = UNavigationQueryFilter::StaticClass();
+		bool navResult = navSystem->K2_ProjectPointToNavigation(GetWorld(), hitpos.Location, projectedPoint, navData, FilterClass);
+		GEngine->AddOnScreenDebugMessage(-1, 0.35f, FColor::Red, FString::Printf(TEXT("is on mesh = %d"),navResult));
+		//if a new point was successfully calculated
+		if (navResult) {
+			//if projected point is not too far from the physics hit point
+			if (FVector::Distance(hitpos.Location, projectedPoint) <= TeleportMaxProjectionDistance) {
+				teleportTarget = projectedPoint;
+				DrawDebugSphere(GetWorld(), hitpos.Location, 5, 2, FColor::Red);
+			}
+		}
 	}
 	else {
 		teleportTarget = FVector::ZeroVector;
