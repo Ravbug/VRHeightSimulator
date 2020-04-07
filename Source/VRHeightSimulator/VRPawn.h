@@ -10,6 +10,8 @@
 #include "VRPawn.generated.h"
 
 #define SCREENPRINT(a,b) (GEngine->AddOnScreenDebugMessage(-1, 0.35f, FColor::Red, FString::Printf(TEXT(a),b)))
+#define SCREENPRINT2(a) (GEngine->AddOnScreenDebugMessage(-1, 0.35f, FColor::Red, FString::Printf(TEXT(a))))
+
 
 UCLASS()
 class VRHEIGHTSIMULATOR_API AVRPawn : public APawn
@@ -51,8 +53,6 @@ public:
 
 	void VRControllerStartTeleport(UMotionControllerComponent*);
 	void VRControllerEndTeleport(const FVector&);
-	void VRControllerStartGrab(UMotionControllerComponent*);
-	void VRControllerEndGrab(UMotionControllerComponent*);
 
 	UFUNCTION()
 	void OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -88,4 +88,5 @@ private:
 
 	AActor* leftHover = nullptr;
 	AActor* rightHover = nullptr;
+
 };

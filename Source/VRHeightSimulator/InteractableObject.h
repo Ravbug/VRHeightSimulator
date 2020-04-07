@@ -24,8 +24,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SimpleDisplay)
+	UStaticMeshComponent* rootMesh;
+
 	//for interacting with this physics object
-	void PickUp();
+	void PickUp(USceneComponent* newParent);
 	void Release();
+
 
 };

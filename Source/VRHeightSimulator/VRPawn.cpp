@@ -74,6 +74,7 @@ void AVRPawn::Tick(float DeltaTime)
 		isLeftRequesting = isRightRequesting = TeleportStatus::None;
 	}
 
+	//SCREENPRINT("Actor at %ld is near Left controller ", &(*leftHover));
 }
 
 // Called to bind functionality to input
@@ -134,62 +135,71 @@ void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
 	}
 }
 
-void AVRPawn::VRControllerStartGrab(UMotionControllerComponent* controller) {
-
-}
-
-void AVRPawn::VRControllerEndGrab(UMotionControllerComponent* controller) {
-
-}
-
 
 void AVRPawn::OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SCREENPRINT("Actor at %s is near Left controller", OtherActor);
 	if (Cast<AInteractableObject>(OtherActor) != nullptr) {
 		leftHover = OtherActor;
+		//SCREENPRINT("Actor at %ld is near Left controller ", &leftHover);
 	}
 }
 
 void AVRPawn::OnRightBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SCREENPRINT("Actor at %s is near Right controller ", OtherActor);
 	if (Cast<AInteractableObject>(OtherActor) != nullptr) {
 		rightHover = OtherActor;
+		//SCREENPRINT("Actor at %ld is near Right controller ", &rightHover);
 	}
 }
 
 void AVRPawn::OnLeftEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	SCREENPRINT("Actor at %s exited Left controller ", OtherActor);
-	leftHover = nullptr;
+	if (OtherActor == leftHover) {
+		//SCREENPRINT("Actor at %ld exited Left controller ", &OtherActor);
+		leftHover = nullptr;
+
+	}
 }
 
 void AVRPawn::OnRightEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	SCREENPRINT("Actor at %s exited Right controller ", OtherActor);
-	rightHover = nullptr;
+	if (OtherActor == rightHover) {
+		//SCREENPRINT("Actor at %ld exited Right controller ", &OtherActor);
+		rightHover = nullptr;
+	}
 }
 
 
 void AVRPawn::VRControllerGrabLeft() {
-	UE_LOG(LogTemp, Warning, TEXT("Grab left!"));
-	VRControllerStartGrab(LeftHandController);
+	//attach the hover actor to this component
+	//UE_LOG(LogTemp,Warning,TEXT("left hover = %s"),leftHover)
+	SCREENPRINT("hover target = %ld", &(*leftHover));
+	if (leftHover != nullptr) {
+		SCREENPRINT2("Will Grab Left");
+		Cast<AInteractableObject>(leftHover)->PickUp(LeftHandController);
+	}
 }
 
 void AVRPawn::VRControllerGrabRight() {
-	UE_LOG(LogTemp, Warning, TEXT("Grab right!"));
-	VRControllerStartGrab(RightHandController);
+	SCREENPRINT("hover target = %ld", &(*rightHover));
+	if (rightHover != nullptr) {
+		SCREENPRINT2("Will Grab Right");
+		Cast<AInteractableObject>(rightHover)->PickUp(RightHandController);
+	}
 }
 
 void AVRPawn::VRControllerReleaseLeft() {
-	UE_LOG(LogTemp, Warning, TEXT("Release left!"));
-	VRControllerEndGrab(LeftHandController);
+	SCREENPRINT2("Release initiate");
+	if (leftHover != nullptr) {
+		Cast<AInteractableObject>(leftHover)->Release();
+	}
 }
 
 void AVRPawn::VRControllerReleaseRight() {
-	UE_LOG(LogTemp, Warning, TEXT("Release right!"));
-	VRControllerEndGrab(RightHandController);
+	SCREENPRINT2("Release initiate");
+	if (rightHover != nullptr) {
+		Cast<AInteractableObject>(rightHover)->Release();
+	}
 }
 
 void AVRPawn::VRControllerRequestTeleportRight() {
