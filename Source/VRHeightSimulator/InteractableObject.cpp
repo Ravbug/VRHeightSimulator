@@ -28,8 +28,8 @@ void AInteractableObject::Tick(float DeltaTime)
 }
 
 void AInteractableObject::PickUp(USceneComponent* newParent) {
-	AttachToComponent(newParent, FAttachmentTransformRules::KeepWorldTransform);
 	rootMesh->SetSimulatePhysics(false);
+	AttachToComponent(newParent, FAttachmentTransformRules::KeepWorldTransform);
 }
 
 void AInteractableObject::Release() {
