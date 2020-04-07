@@ -7,6 +7,7 @@
 #include "AI/NavigationSystemBase.h"
 #include "NavigationSystem.h"
 #include "NavFilters/NavigationQueryFilter.h"
+#include "InteractableObject.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -30,6 +31,18 @@ AVRPawn::AVRPawn()
 	//Set the input source for the left and right hands
 	LeftHandController->SetTrackingMotionSource("Left");
 	RightHandController->SetTrackingMotionSource("Right");
+
+	//collision boxes for controllers
+	RightControllerDetect = CreateDefaultSubobject<UBoxComponent>("Right Detect");
+	LeftControllerDetect = CreateDefaultSubobject<UBoxComponent>("Left Detect");
+	RightControllerDetect->SetupAttachment(RightHandController);
+	LeftControllerDetect->SetupAttachment(LeftHandController);
+
+	//Collision Events
+	RightControllerDetect->OnComponentBeginOverlap.AddDynamic(this, &AVRPawn::OnRightBeginOverlap);
+	LeftControllerDetect->OnComponentBeginOverlap.AddDynamic(this, &AVRPawn::OnLeftBeginOverlap);
+	RightControllerDetect->OnComponentEndOverlap.AddDynamic(this, &AVRPawn::OnRightEndOverlap);
+	LeftControllerDetect->OnComponentEndOverlap.AddDynamic(this, &AVRPawn::OnLeftEndOverlap);
 }
 
 // Called when the game starts or when spawned
@@ -98,7 +111,6 @@ void AVRPawn::VRControllerStartTeleport(UMotionControllerComponent* controller) 
 		ANavigationData* navData = navSystem->GetNavDataForProps(GetNavAgentPropertiesRef());
 		TSubclassOf<UNavigationQueryFilter> FilterClass = UNavigationQueryFilter::StaticClass();
 		bool navResult = navSystem->K2_ProjectPointToNavigation(GetWorld(), hitpos.Location, projectedPoint, navData, FilterClass);
-		GEngine->AddOnScreenDebugMessage(-1, 0.35f, FColor::Red, FString::Printf(TEXT("is on mesh = %d"),navResult));
 		//if a new point was successfully calculated
 		if (navResult) {
 			//if projected point is not too far from the physics hit point
@@ -128,6 +140,35 @@ void AVRPawn::VRControllerStartGrab(UMotionControllerComponent* controller) {
 
 void AVRPawn::VRControllerEndGrab(UMotionControllerComponent* controller) {
 
+}
+
+
+void AVRPawn::OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	SCREENPRINT("Actor at %s is near Left controller", OtherActor);
+	if (Cast<AInteractableObject>(OtherActor) != nullptr) {
+		leftHover = OtherActor;
+	}
+}
+
+void AVRPawn::OnRightBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	SCREENPRINT("Actor at %s is near Right controller ", OtherActor);
+	if (Cast<AInteractableObject>(OtherActor) != nullptr) {
+		rightHover = OtherActor;
+	}
+}
+
+void AVRPawn::OnLeftEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	SCREENPRINT("Actor at %s exited Left controller ", OtherActor);
+	leftHover = nullptr;
+}
+
+void AVRPawn::OnRightEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	SCREENPRINT("Actor at %s exited Right controller ", OtherActor);
+	rightHover = nullptr;
 }
 
 
