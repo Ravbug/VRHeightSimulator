@@ -24,4 +24,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	//for interacting with this physics object
+	void PickUp();
+	void Release();
+
 };

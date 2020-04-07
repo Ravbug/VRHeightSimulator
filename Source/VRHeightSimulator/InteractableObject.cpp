@@ -25,3 +25,10 @@ void AInteractableObject::Tick(float DeltaTime)
 
 }
 
+void AInteractableObject::PickUp() {
+
+}
+
+void AInteractableObject::Release() {
+
+}
