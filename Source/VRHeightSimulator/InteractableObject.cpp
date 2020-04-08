@@ -36,3 +36,9 @@ void AInteractableObject::Release() {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	rootMesh->SetSimulatePhysics(true);
 }
+
+void AInteractableObject::SetHighlightStatus(bool newStatus) {
+	//enable / disable highlighting and set the stencil value if true
+	rootMesh->SetRenderCustomDepth(newStatus);
+	rootMesh->SetCustomDepthStencilValue(newStatus? 2 : 0);
+}

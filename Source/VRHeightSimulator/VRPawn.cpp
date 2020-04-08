@@ -138,65 +138,63 @@ void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
 
 void AVRPawn::OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<AInteractableObject>(OtherActor) != nullptr) {
+	auto casted = Cast<AInteractableObject>(OtherActor);
+	if (casted != nullptr) {
 		leftHover = OtherActor;
-		//SCREENPRINT("Actor at %ld is near Left controller ", &leftHover);
+		casted->SetHighlightStatus(true);
 	}
 }
 
 void AVRPawn::OnRightBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<AInteractableObject>(OtherActor) != nullptr) {
+	auto casted = Cast<AInteractableObject>(OtherActor);
+	if (casted != nullptr) {
 		rightHover = OtherActor;
-		//SCREENPRINT("Actor at %ld is near Right controller ", &rightHover);
+		casted->SetHighlightStatus(true);
 	}
 }
 
 void AVRPawn::OnLeftEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (OtherActor == leftHover) {
-		//SCREENPRINT("Actor at %ld exited Left controller ", &OtherActor);
 		leftHover = nullptr;
-
+		Cast<AInteractableObject>(OtherActor)->SetHighlightStatus(false);
 	}
 }
 
 void AVRPawn::OnRightEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (OtherActor == rightHover) {
-		//SCREENPRINT("Actor at %ld exited Right controller ", &OtherActor);
 		rightHover = nullptr;
+		Cast<AInteractableObject>(OtherActor)->SetHighlightStatus(false);
 	}
 }
 
 
 void AVRPawn::VRControllerGrabLeft() {
 	//attach the hover actor to this component
-	//UE_LOG(LogTemp,Warning,TEXT("left hover = %s"),leftHover)
-	SCREENPRINT("hover target = %ld", &(*leftHover));
 	if (leftHover != nullptr) {
-		SCREENPRINT2("Will Grab Left");
-		Cast<AInteractableObject>(leftHover)->PickUp(LeftHandController);
+		auto casted = Cast<AInteractableObject>(leftHover);
+		casted->PickUp(LeftHandController);
+		casted->SetHighlightStatus(false);
 	}
 }
 
 void AVRPawn::VRControllerGrabRight() {
-	SCREENPRINT("hover target = %ld", &(*rightHover));
 	if (rightHover != nullptr) {
-		SCREENPRINT2("Will Grab Right");
-		Cast<AInteractableObject>(rightHover)->PickUp(RightHandController);
+		auto casted = Cast<AInteractableObject>(rightHover);
+		casted->PickUp(RightHandController);
+		casted->SetHighlightStatus(false);
 	}
 }
 
 void AVRPawn::VRControllerReleaseLeft() {
-	SCREENPRINT2("Release initiate");
 	if (leftHover != nullptr) {
 		Cast<AInteractableObject>(leftHover)->Release();
 	}
 }
 
 void AVRPawn::VRControllerReleaseRight() {
-	SCREENPRINT2("Release initiate");
 	if (rightHover != nullptr) {
 		Cast<AInteractableObject>(rightHover)->Release();
 	}

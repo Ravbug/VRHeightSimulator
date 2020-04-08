@@ -31,5 +31,6 @@ public:
 	void PickUp(USceneComponent* newParent);
 	void Release();
 
+	void SetHighlightStatus(bool newStatus);
 
 };
