@@ -18,31 +18,18 @@ AVRPawn::AVRPawn()
 	root = CreateDefaultSubobject<UBoxComponent>("VRPawnRoot");
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	RootComponent = root;
-	LeftHandController = CreateDefaultSubobject<UMotionControllerComponent>("Left Hand");
-	RightHandController = CreateDefaultSubobject<UMotionControllerComponent>("Right Hand");
+	LeftHandController = CreateDefaultSubobject<UVRController>("Left Hand");
+	RightHandController = CreateDefaultSubobject<UVRController>("Right Hand");
 	LeftHandController->SetupAttachment(root);
 	RightHandController->SetupAttachment(root);
 	Camera->SetupAttachment(root);
 
-	//show the model for the hands
-	LeftHandController->SetShowDeviceModel(true);
-	RightHandController->SetShowDeviceModel(true);
-
 	//Set the input source for the left and right hands
-	LeftHandController->SetTrackingMotionSource("Left");
-	RightHandController->SetTrackingMotionSource("Right");
+	LeftHandController->Init("Left");
+	RightHandController->Init("Right");
 
-	//collision boxes for controllers
-	RightControllerDetect = CreateDefaultSubobject<UBoxComponent>("Right Detect");
-	LeftControllerDetect = CreateDefaultSubobject<UBoxComponent>("Left Detect");
-	RightControllerDetect->SetupAttachment(RightHandController);
-	LeftControllerDetect->SetupAttachment(LeftHandController);
-
-	//Collision Events
-	RightControllerDetect->OnComponentBeginOverlap.AddDynamic(this, &AVRPawn::OnRightBeginOverlap);
-	LeftControllerDetect->OnComponentBeginOverlap.AddDynamic(this, &AVRPawn::OnLeftBeginOverlap);
-	RightControllerDetect->OnComponentEndOverlap.AddDynamic(this, &AVRPawn::OnRightEndOverlap);
-	LeftControllerDetect->OnComponentEndOverlap.AddDynamic(this, &AVRPawn::OnLeftEndOverlap);
+	LeftHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
+	RightHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
 }
 
 // Called when the game starts or when spawned
@@ -59,22 +46,6 @@ void AVRPawn::BeginPlay()
 void AVRPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//request teleport
-	if (isLeftRequesting == TeleportStatus::Request) {
-		VRControllerStartTeleport(LeftHandController);
-	}
-	else if (isRightRequesting == TeleportStatus::Request) {
-		VRControllerStartTeleport(RightHandController);
-	}
-
-	//confirm teleport
-	if ((isLeftRequesting == TeleportStatus::Confirm || isRightRequesting == TeleportStatus::Confirm)) {
-		VRControllerEndTeleport(teleportTarget);
-		isLeftRequesting = isRightRequesting = TeleportStatus::None;
-	}
-
-	//SCREENPRINT("Actor at %ld is near Left controller ", &(*leftHover));
 }
 
 // Called to bind functionality to input
@@ -94,40 +65,6 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
 }
 
-void AVRPawn::VRControllerStartTeleport(UMotionControllerComponent* controller) {
-	FHitResult hitpos;
-	TArray<FVector> OutPath;
-	FVector lastTrace;
-	FVector LaunchVelocity(controller->GetForwardVector() * 900);
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-	ObjectTypes.Init(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic),1);
-
-	//predict a projectile to find arc teleport position
-	if (UGameplayStatics::Blueprint_PredictProjectilePath_ByObjectType(GetWorld(), hitpos, OutPath, lastTrace, controller->GetComponentLocation(),
-		LaunchVelocity, true, 0.0, ObjectTypes, false, TArray<AActor*>(), EDrawDebugTrace::ForOneFrame, 1.0, 30.0, 2.0, 0.0)) {
-
-		FVector projectedPoint;
-		//determine if the hit point is on the nav mesh by projecting the current point to the navmesh
-		UNavigationSystemV1* navSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(this);
-		ANavigationData* navData = navSystem->GetNavDataForProps(GetNavAgentPropertiesRef());
-		TSubclassOf<UNavigationQueryFilter> FilterClass = UNavigationQueryFilter::StaticClass();
-		bool navResult = navSystem->K2_ProjectPointToNavigation(GetWorld(), hitpos.Location, projectedPoint, navData, FilterClass);
-		//if a new point was successfully calculated
-		if (navResult) {
-			//if projected point is not too far from the physics hit point
-			if (FVector::Distance(hitpos.Location, projectedPoint) <= TeleportMaxProjectionDistance) {
-				teleportTarget = projectedPoint;
-				DrawDebugSphere(GetWorld(), hitpos.Location, 5, 2, FColor::Red);
-			}
-		}
-	}
-	else {
-		teleportTarget = FVector::ZeroVector;
-	}
-
-	
-}
-
 void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
 	if (newPos != FVector::ZeroVector) {
 		//TODO: set camera fade time
@@ -135,81 +72,32 @@ void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
 	}
 }
 
-
-void AVRPawn::OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	auto casted = Cast<AInteractableObject>(OtherActor);
-	if (casted != nullptr) {
-		leftHover = OtherActor;
-		casted->SetHighlightStatus(true);
-	}
-}
-
-void AVRPawn::OnRightBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	auto casted = Cast<AInteractableObject>(OtherActor);
-	if (casted != nullptr) {
-		rightHover = OtherActor;
-		casted->SetHighlightStatus(true);
-	}
-}
-
-void AVRPawn::OnLeftEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor == leftHover) {
-		leftHover = nullptr;
-		Cast<AInteractableObject>(OtherActor)->SetHighlightStatus(false);
-	}
-}
-
-void AVRPawn::OnRightEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (OtherActor == rightHover) {
-		rightHover = nullptr;
-		Cast<AInteractableObject>(OtherActor)->SetHighlightStatus(false);
-	}
-}
-
-
 void AVRPawn::VRControllerGrabLeft() {
-	//attach the hover actor to this component
-	if (leftHover != nullptr) {
-		auto casted = Cast<AInteractableObject>(leftHover);
-		casted->PickUp(LeftHandController);
-		casted->SetHighlightStatus(false);
-	}
+	LeftHandController->Grab();
 }
 
 void AVRPawn::VRControllerGrabRight() {
-	if (rightHover != nullptr) {
-		auto casted = Cast<AInteractableObject>(rightHover);
-		casted->PickUp(RightHandController);
-		casted->SetHighlightStatus(false);
-	}
+	RightHandController->Grab();
 }
 
 void AVRPawn::VRControllerReleaseLeft() {
-	if (leftHover != nullptr) {
-		Cast<AInteractableObject>(leftHover)->Release();
-	}
+	LeftHandController->Release();
 }
 
 void AVRPawn::VRControllerReleaseRight() {
-	if (rightHover != nullptr) {
-		Cast<AInteractableObject>(rightHover)->Release();
-	}
+	RightHandController->Release();
 }
 
 void AVRPawn::VRControllerRequestTeleportRight() {
-	isRightRequesting = TeleportStatus::Request;
+	RightHandController->RequestTeleport();
 }
 void AVRPawn::VRControllerRequestTeleportLeft() {
-	isLeftRequesting = TeleportStatus::Request;
+	LeftHandController->RequestTeleport();
 }
 void AVRPawn::VRControllerConfirmTeleportRight() {
-	isRightRequesting = TeleportStatus::Confirm;
+	RightHandController->ConfirmTeleport();
 
 }
 void AVRPawn::VRControllerConfirmTeleportLeft() {
-	isLeftRequesting = TeleportStatus::Confirm;
+	LeftHandController->ConfirmTeleport();
 }

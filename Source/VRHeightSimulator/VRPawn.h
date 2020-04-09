@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "MotionControllerComponent.h"
 #include "Components/BoxComponent.h"
+#include "VRController.h"
 #include "VRPawn.generated.h"
 
 #define SCREENPRINT(a,b) (GEngine->AddOnScreenDebugMessage(-1, 0.35f, FColor::Red, FString::Printf(TEXT(a),b)))
@@ -37,32 +38,16 @@ public:
 	UCameraComponent* Camera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMotionControllerComponent* LeftHandController;
+	UVRController* LeftHandController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMotionControllerComponent* RightHandController;
+	UVRController* RightHandController;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* root;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBoxComponent* RightControllerDetect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBoxComponent* LeftControllerDetect;
-
-	void VRControllerStartTeleport(UMotionControllerComponent*);
+	UFUNCTION();
 	void VRControllerEndTeleport(const FVector&);
-
-	UFUNCTION()
-	void OnLeftBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnRightBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnLeftEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	UFUNCTION()
-	void OnRightEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	//VR Controller input events
 	//see the Input tab of the Project Settings -> Input to see where these are defined
@@ -79,14 +64,5 @@ public:
 	void VRControllerConfirmTeleportLeft();
 
 private:
-	enum TeleportStatus {None,Request,Confirm};
-	TeleportStatus isLeftRequesting, isRightRequesting;
-
-	//cannot teleport to the origin
-	FVector teleportTarget = FVector::ZeroVector;
-	const int TeleportMaxProjectionDistance = 10;
-
-	AActor* leftHover = nullptr;
-	AActor* rightHover = nullptr;
-
+	
 };
