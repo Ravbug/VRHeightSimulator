@@ -57,7 +57,7 @@ void UVRController::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	else if (requestStatus == TeleportStatus::Confirm) {
 		//confirm teleport
 		requestStatus = TeleportStatus::None;
-		Teleport.Broadcast(teleportTarget);
+		//Teleport.Broadcast(teleportTarget);
 	}
 }
 

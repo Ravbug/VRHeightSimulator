@@ -75,3 +75,5 @@ DerivedDataCache/*
 
 enc_temp_folder/
 Config/SteamVRBindings
+
+*.DS_Store

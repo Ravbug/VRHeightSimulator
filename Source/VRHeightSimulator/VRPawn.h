@@ -46,8 +46,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* root;
 
-	UFUNCTION();
-	void VRControllerEndTeleport(const FVector&);
+	UFUNCTION()
+	void VRControllerEndTeleport(const FVector& teleportTarget);
 
 	//VR Controller input events
 	//see the Input tab of the Project Settings -> Input to see where these are defined

@@ -28,8 +28,8 @@ AVRPawn::AVRPawn()
 	LeftHandController->Init("Left");
 	RightHandController->Init("Right");
 
-	LeftHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
-	RightHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
+//	LeftHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
+//	RightHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
 }
 
 // Called when the game starts or when spawned
