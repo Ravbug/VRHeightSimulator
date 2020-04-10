@@ -27,13 +27,14 @@ protected:
 	const int TeleportMaxProjectionDistance = 10;
 
 	AActor* hoverActor = nullptr;
-	
 	APawn* parentActor = Cast<APawn>(GetAttachmentRootActor());
 
 	//cannot teleport to the origin
 	FVector teleportTarget = FVector::ZeroVector;
 
 	//TSubclassOf<AVRPawn> parent;
+
+	void ConnectPointsWithLine(const TArray<FVector>& points, const FColor& lineColor, float thickness = 5.0f);
 
 public:	
 	// Called every frame

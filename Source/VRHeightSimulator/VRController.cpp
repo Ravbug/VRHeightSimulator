@@ -7,6 +7,7 @@
 #include "NavigationSystem.h"
 #include "NavFilters/NavigationQueryFilter.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/HUD.h"
 #include "InteractableObject.h"
 
 
@@ -44,6 +45,26 @@ void UVRController::BeginPlay()
 	
 }
 
+/**
+ * Draw an array of points as a line
+ * @param points the array of points to draw
+ * @param lineColor the color to draw the line
+ */
+void UVRController::ConnectPointsWithLine(const TArray<FVector>& points, const FColor& lineColor, float thickness)
+{
+	int itr = points.Num() - 1;
+	auto controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	auto hud = controller->GetHUD();
+	for (int i = 0; i < itr; ++i) {
+		FVector2D p1, p2;
+		int success = UGameplayStatics::ProjectWorldToScreen(controller, points[i], p1, true) * UGameplayStatics::ProjectWorldToScreen(controller, points[i + 1], p2, true);
+		if ((bool)success)
+		{
+			hud->DrawLine(p1.X, p1.Y, p2.X, p2.Y, lineColor, thickness);
+		}
+		hud->Draw3DLine(points[i], points[i + 1], lineColor);
+	}
+}
 
 // Called every frame
 void UVRController::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -138,7 +159,7 @@ void UVRController::BeginTeleport()
 
 	//predict a projectile to find arc teleport position
 	if (UGameplayStatics::Blueprint_PredictProjectilePath_ByObjectType(GetWorld(), hitpos, OutPath, lastTrace, Controller->GetComponentLocation(),
-		LaunchVelocity, true, 0.0, ObjectTypes, false, TArray<AActor*>(), EDrawDebugTrace::ForOneFrame, 1.0, 30.0, 2.0, 0.0)) {
+		LaunchVelocity, true, 0.0, ObjectTypes, false, TArray<AActor*>(), EDrawDebugTrace::None, 1.0, 30.0, 2.0, 0.0)) {
 
 		FVector projectedPoint;
 		//determine if the hit point is on the nav mesh by projecting the current point to the navmesh
@@ -151,11 +172,19 @@ void UVRController::BeginTeleport()
 			//if projected point is not too far from the physics hit point
 			if (FVector::Distance(hitpos.Location, projectedPoint) <= TeleportMaxProjectionDistance) {
 				teleportTarget = projectedPoint;
+				ConnectPointsWithLine(OutPath, FColor::Green);
 				DrawDebugSphere(GetWorld(), hitpos.Location, 5, 2, FColor::Red);
 			}
+			else {
+				ConnectPointsWithLine(OutPath, FColor::Red);
+			}
+		}
+		else {
+			ConnectPointsWithLine(OutPath, FColor::Red);
 		}
 	}
 	else {
 		teleportTarget = FVector::ZeroVector;
+		ConnectPointsWithLine(OutPath, FColor::Red);
 	}
 }
