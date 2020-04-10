@@ -28,8 +28,8 @@ AVRPawn::AVRPawn()
 	LeftHandController->Init("Left");
 	RightHandController->Init("Right");
 
-//	LeftHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
-//	RightHandController->Teleport.AddDynamic(this, &AVPawn::VRControllerEndTeleport);
+	LeftHandController->Teleport.AddDynamic(this, &AVRPawn::VRControllerEndTeleport);
+	RightHandController->Teleport.AddDynamic(this, &AVRPawn::VRControllerEndTeleport);
 }
 
 // Called when the game starts or when spawned
@@ -65,7 +65,7 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
 }
 
-void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
+void AVRPawn::VRControllerEndTeleport(FVector newPos) {
 	if (newPos != FVector::ZeroVector) {
 		//TODO: set camera fade time
 		SetActorLocation(newPos);

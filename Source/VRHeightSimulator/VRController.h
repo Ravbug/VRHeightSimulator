@@ -9,7 +9,7 @@
 #include "VRController.generated.h"
 
 //declare event for teleportation
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeleport, FVector, teleportLocation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTeleport, FVector, teleportLocation);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VRHEIGHTSIMULATOR_API UVRController : public USceneComponent
@@ -73,7 +73,7 @@ public:
 	FVector TeleportTarget = FVector::ZeroVector;
 
 	//declare delegate for teleportation
-//	UPROPERTY(BlueprintAssignable, Category = "Events")
-//	FOnTeleport Teleport;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnTeleport Teleport;
 
 };
