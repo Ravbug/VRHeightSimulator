@@ -50,10 +50,12 @@ void UVRController::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	//should try to teleport?
 	if (requestStatus == TeleportStatus::Request)
 	{
 		BeginTeleport();
 	}
+	//teleport was confirmed? Notify VRPawn
 	else if (requestStatus == TeleportStatus::Confirm) {
 		//confirm teleport
 		requestStatus = TeleportStatus::None;
@@ -61,20 +63,34 @@ void UVRController::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	}
 }
 
+/**
+ * Initialize this controller. You must call this method after creating an AVRController.
+ * @param trackingSource the string representing the source to get tracking data for this controller
+ */
 void UVRController::Init(const FName& trackingSource)
 {
 	Controller->SetTrackingMotionSource(trackingSource);
 }
 
+/**
+* Called when the boxcollider overlaps an object.
+* Filters out only objects that are of the type AInteractableObject
+* Marks the object as a hoverobject and sets it to highlight itself
+*/
 void UVRController::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	auto casted = Cast<AInteractableObject>(OtherActor);
 	if (casted != nullptr) {
 		hoverActor = OtherActor;
 		casted->SetHighlightStatus(true);
+
 	}
 }
 
+/**
+ * Called when the boxcollider stops overlapping an object
+ * Sets that object to stop highlighting itself if it is the hover object
+ */
 void UVRController::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (OtherActor == hoverActor) {
@@ -83,6 +99,9 @@ void UVRController::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	}
 }
 
+/**
+ * Pick up the current hover object by signalling it to attach itself to this controller
+ */
 void UVRController::Grab()
 {
 	//attach the hover actor to this component
@@ -93,6 +112,9 @@ void UVRController::Grab()
 	}
 }
 
+/**
+ * Release the hoverobject by signalling it to resume physics and detach itself from this controller
+ */
 void UVRController::Release()
 {
 	if (hoverActor != nullptr) {
@@ -100,6 +122,11 @@ void UVRController::Release()
 	}
 }
 
+/**
+ * Perform one tick of a VR arc teleport
+ * Considers where the ground is using the navigation mesh
+ * If the location is invalid, the teleport target is set to FVector::ZeroVector
+ */
 void UVRController::BeginTeleport()
 {
 	FHitResult hitpos;
@@ -132,8 +159,3 @@ void UVRController::BeginTeleport()
 		teleportTarget = FVector::ZeroVector;
 	}
 }
-
-void UVRController::EndTeleport()
-{
-}
-

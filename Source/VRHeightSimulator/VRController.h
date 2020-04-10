@@ -57,7 +57,6 @@ public:
 	void Grab();
 	void Release();
 	void BeginTeleport();
-	void EndTeleport();
 
 	enum TeleportStatus { None, Request, Confirm };
 	TeleportStatus requestStatus = TeleportStatus::None;

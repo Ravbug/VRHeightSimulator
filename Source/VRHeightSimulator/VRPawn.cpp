@@ -28,8 +28,8 @@ AVRPawn::AVRPawn()
 	LeftHandController->Init("Left");
 	RightHandController->Init("Right");
 
-	LeftHandController->Teleport.AddDynamic(this, &AVRPawn::VRControllerEndTeleport);
-	RightHandController->Teleport.AddDynamic(this, &AVRPawn::VRControllerEndTeleport);
+	LeftHandController->Teleport.AddDynamic(this, &AVRPawn::TeleportTo);
+	RightHandController->Teleport.AddDynamic(this, &AVRPawn::TeleportTo);
 }
 
 // Called when the game starts or when spawned
@@ -65,29 +65,30 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
 }
 
-void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
+/**
+ * Teleport this VR pawn to the passed location
+ * @param newPos the location to teleport to
+ */
+void AVRPawn::TeleportTo(const FVector& newPos) {
 	if (newPos != FVector::ZeroVector) {
 		//TODO: set camera fade time
 		SetActorLocation(newPos);
 	}
 }
 
+/// ================================= PlayerInput wrapping functions ================================
 void AVRPawn::VRControllerGrabLeft() {
 	LeftHandController->Grab();
 }
-
 void AVRPawn::VRControllerGrabRight() {
 	RightHandController->Grab();
 }
-
 void AVRPawn::VRControllerReleaseLeft() {
 	LeftHandController->Release();
 }
-
 void AVRPawn::VRControllerReleaseRight() {
 	RightHandController->Release();
 }
-
 void AVRPawn::VRControllerRequestTeleportRight() {
 	RightHandController->RequestTeleport();
 }
