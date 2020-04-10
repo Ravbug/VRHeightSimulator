@@ -47,7 +47,7 @@ public:
 	UBoxComponent* root;
 
 	UFUNCTION()
-	void VRControllerEndTeleport(FVector teleportTarget);
+	void VRControllerEndTeleport(const FVector& newPos);
 
 	//VR Controller input events
 	//see the Input tab of the Project Settings -> Input to see where these are defined

@@ -65,7 +65,7 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
 }
 
-void AVRPawn::VRControllerEndTeleport(FVector newPos) {
+void AVRPawn::VRControllerEndTeleport(const FVector& newPos) {
 	if (newPos != FVector::ZeroVector) {
 		//TODO: set camera fade time
 		SetActorLocation(newPos);
