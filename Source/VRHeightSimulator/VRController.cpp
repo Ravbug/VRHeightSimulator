@@ -56,13 +56,14 @@ void UVRController::ConnectPointsWithLine(const TArray<FVector>& points, const F
 	auto controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	auto hud = controller->GetHUD();
 	for (int i = 0; i < itr; ++i) {
-		FVector2D p1, p2;
-		int success = UGameplayStatics::ProjectWorldToScreen(controller, points[i], p1, true) * UGameplayStatics::ProjectWorldToScreen(controller, points[i + 1], p2, true);
+		//FVector2D p1, p2;
+		/*int success = UGameplayStatics::ProjectWorldToScreen(controller, points[i], p1, true) * UGameplayStatics::ProjectWorldToScreen(controller, points[i + 1], p2, true);
 		if ((bool)success)
 		{
 			hud->DrawLine(p1.X, p1.Y, p2.X, p2.Y, lineColor, thickness);
 		}
-		hud->Draw3DLine(points[i], points[i + 1], lineColor);
+		hud->Draw3DLine(points[i], points[i + 1], lineColor);*/
+		DrawDebugLine(GetWorld(), points[i], points[i + 1], lineColor, false, 0.0f, 0.0f, thickness);
 	}
 }
 

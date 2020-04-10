@@ -34,7 +34,7 @@ protected:
 
 	//TSubclassOf<AVRPawn> parent;
 
-	void ConnectPointsWithLine(const TArray<FVector>& points, const FColor& lineColor, float thickness = 5.0f);
+	void ConnectPointsWithLine(const TArray<FVector>& points, const FColor& lineColor, float thickness = 2.0f);
 
 public:	
 	// Called every frame
