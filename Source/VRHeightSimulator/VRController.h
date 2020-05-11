@@ -24,7 +24,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	const int TeleportMaxProjectionDistance = 10;
+	const int TeleportMaxProjectionDistance = 50;
 
 	AActor* hoverActor = nullptr;
 	APawn* parentActor = Cast<APawn>(GetAttachmentRootActor());
