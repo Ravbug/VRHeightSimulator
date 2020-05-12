@@ -30,7 +30,6 @@ AVRPawn::AVRPawn()
 
 	LeftHandController->Teleport.AddDynamic(this, &AVRPawn::TeleportTo);
 	RightHandController->Teleport.AddDynamic(this, &AVRPawn::TeleportTo);
-
 }
 
 // Called when the game starts or when spawned
@@ -41,6 +40,10 @@ void AVRPawn::BeginPlay()
 	//set tracking origin
 	//Note:: be sure to set this pawn to be auto-possessed by player 0!
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
+
+	//bind hud events
+	HudActor->IncrementSizeEvt.AddDynamic(this, &AVRPawn::UMGIncreaseSize);
+	HudActor->DecrementSizeEvt.AddDynamic(this, &AVRPawn::UMGDecreaseSize);
 
 	//SetScale(2.0);
 }
@@ -117,4 +120,16 @@ void AVRPawn::VRControllerConfirmTeleportRight() {
 }
 void AVRPawn::VRControllerConfirmTeleportLeft() {
 	LeftHandController->ConfirmTeleport();
+}
+
+/// ================================== UMG Events =====================================
+
+void AVRPawn::UMGIncreaseSize()
+{
+	SCREENPRINT2("Increase size");
+}
+
+void AVRPawn::UMGDecreaseSize()
+{
+	SCREENPRINT2("Decrease size");
 }

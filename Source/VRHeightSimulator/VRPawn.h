@@ -8,6 +8,7 @@
 #include "MotionControllerComponent.h"
 #include "Components/BoxComponent.h"
 #include "VRController.h"
+#include "HUDActor.h"
 #include "VRPawn.generated.h"
 
 #define SCREENPRINT(a,b) (GEngine->AddOnScreenDebugMessage(-1, 0.35f, FColor::Red, FString::Printf(TEXT(a),b)))
@@ -46,6 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* root;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		AHUDActor* HudActor;
+
 	UFUNCTION()
 	void TeleportTo(const FVector& newPos);
 
@@ -64,6 +68,13 @@ public:
 	void VRControllerRequestTeleportLeft();
 	void VRControllerConfirmTeleportRight();
 	void VRControllerConfirmTeleportLeft();
+
+	//UMG events
+	UFUNCTION()
+	void UMGIncreaseSize();
+
+	UFUNCTION()
+	void UMGDecreaseSize();
 
 private:
 	

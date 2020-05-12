@@ -7,6 +7,8 @@
 #include "Components/WidgetComponent.h"
 #include "HUDActor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncrementSize);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDecrementSize);
 
 UCLASS()
 class VRHEIGHTSIMULATOR_API AHUDActor : public AActor
@@ -34,4 +36,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actor")
 	virtual void IncrementHit();
 
+	//events for increase and decrease size
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+		FOnIncrementSize IncrementSizeEvt;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+		FOnDecrementSize DecrementSizeEvt;
 };

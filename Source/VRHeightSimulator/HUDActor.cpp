@@ -30,11 +30,10 @@ void AHUDActor::Tick(float DeltaTime)
 
 void AHUDActor::DecrementHit()
 {
-	UE_LOG(LogTemp,Warning,TEXT());
+	DecrementSizeEvt.Broadcast();
 }
 
 void AHUDActor::IncrementHit()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Increment hit"));
+	IncrementSizeEvt.Broadcast();
 }
-
