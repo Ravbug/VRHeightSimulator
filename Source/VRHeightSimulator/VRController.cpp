@@ -31,6 +31,8 @@ UVRController::UVRController()
 	WidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>("Widget Interaction Component");
 	WidgetInteraction->SetupAttachment(Controller);
 
+	WidgetInteraction->bShowDebug = true;
+
 	//show the model for the hands
 	Controller->SetShowDeviceModel(true);
 

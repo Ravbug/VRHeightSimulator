@@ -24,6 +24,13 @@ AVRPawn::AVRPawn()
 	RightHandController->SetupAttachment(root);
 	Camera->SetupAttachment(root);
 
+	UIWidget = CreateDefaultSubobject<UWidgetComponent>("UMG Widget");
+	UIWidget->SetupAttachment(Camera);
+	UIWidget->SetDrawSize(FVector2D(1000,1000));
+	UIWidget->SetRelativeScale3D(FVector(0.2,0.2,0.2));
+	UIWidget->SetRelativeLocation(FVector(320,0,70));
+	UIWidget->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0,0,180)));
+
 	//Set the input source for the left and right hands
 	LeftHandController->Init("Left");
 	RightHandController->Init("Right");
@@ -42,8 +49,8 @@ void AVRPawn::BeginPlay()
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
 
 	//bind hud events
-	HudActor->IncrementSizeEvt.AddDynamic(this, &AVRPawn::UMGIncreaseSize);
-	HudActor->DecrementSizeEvt.AddDynamic(this, &AVRPawn::UMGDecreaseSize);
+	/*HudActor->IncrementSizeEvt.AddDynamic(this, &AVRPawn::UMGIncreaseSize);
+	HudActor->DecrementSizeEvt.AddDynamic(this, &AVRPawn::UMGDecreaseSize);*/
 
 	//SetScale(2.0);
 }
@@ -127,9 +134,13 @@ void AVRPawn::VRControllerConfirmTeleportLeft() {
 void AVRPawn::UMGIncreaseSize()
 {
 	SCREENPRINT2("Increase size");
+	currentSize += 0.1;
+	SetScale(currentSize);
 }
 
 void AVRPawn::UMGDecreaseSize()
 {
 	SCREENPRINT2("Decrease size");
+	currentSize -= 0.1;
+	SetScale(currentSize);
 }
