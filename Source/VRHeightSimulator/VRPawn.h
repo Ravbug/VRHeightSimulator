@@ -49,7 +49,6 @@ public:
 	UFUNCTION()
 	void TeleportTo(const FVector& newPos);
 
-	UFUNCTION(exec)
 	void SetScale(float newScale);
 
 	//VR Controller input events

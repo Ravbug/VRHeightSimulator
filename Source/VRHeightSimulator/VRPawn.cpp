@@ -90,15 +90,19 @@ void AVRPawn::SetScale(float newScale) {
 
 /// ================================= PlayerInput wrapping functions ================================
 void AVRPawn::VRControllerGrabLeft() {
+	LeftHandController->WidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
 	LeftHandController->Grab();
 }
 void AVRPawn::VRControllerGrabRight() {
+	RightHandController->WidgetInteraction->PressPointerKey(EKeys::LeftMouseButton);
 	RightHandController->Grab();
 }
 void AVRPawn::VRControllerReleaseLeft() {
+	LeftHandController->WidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
 	LeftHandController->Release();
 }
 void AVRPawn::VRControllerReleaseRight() {
+	RightHandController->WidgetInteraction->ReleasePointerKey(EKeys::LeftMouseButton);
 	RightHandController->Release();
 }
 void AVRPawn::VRControllerRequestTeleportRight() {

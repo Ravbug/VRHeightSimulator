@@ -6,6 +6,7 @@
 #include "Components/SceneComponent.h"
 #include "MotionControllerComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetInteractionComponent.h"
 #include "VRController.generated.h"
 
 //declare event for teleportation
@@ -48,6 +49,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UBoxComponent* ControllerDetect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		//creates a laser-pointer to allow interaction with UI widget blueprints 
+		UWidgetInteractionComponent* WidgetInteraction;
 
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

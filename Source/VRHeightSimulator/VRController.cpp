@@ -23,6 +23,13 @@ UVRController::UVRController()
 	//collision boxes for controllers
 	ControllerDetect = CreateDefaultSubobject<UBoxComponent>("Detect Trigger");
 	ControllerDetect->SetupAttachment(Controller);
+	
+	//move the detection box forward and shrink it
+	ControllerDetect->SetRelativeLocation(FVector(20,0,0));
+	ControllerDetect->SetRelativeScale3D(FVector(0.5,0.5,0.5));
+
+	WidgetInteraction = CreateDefaultSubobject<UWidgetInteractionComponent>("Widget Interaction Component");
+	WidgetInteraction->SetupAttachment(Controller);
 
 	//show the model for the hands
 	Controller->SetShowDeviceModel(true);
