@@ -49,6 +49,9 @@ public:
 	UFUNCTION()
 	void TeleportTo(const FVector& newPos);
 
+	UFUNCTION(exec)
+	void SetScale(float newScale);
+
 	//VR Controller input events
 	//see the Input tab of the Project Settings -> Input to see where these are defined
 	// the VR template project has many pre-defined for different VR setups

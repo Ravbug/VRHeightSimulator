@@ -17,7 +17,6 @@ AInteractableObject::AInteractableObject()
 void AInteractableObject::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

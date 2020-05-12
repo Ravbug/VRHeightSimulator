@@ -30,6 +30,7 @@ AVRPawn::AVRPawn()
 
 	LeftHandController->Teleport.AddDynamic(this, &AVRPawn::TeleportTo);
 	RightHandController->Teleport.AddDynamic(this, &AVRPawn::TeleportTo);
+
 }
 
 // Called when the game starts or when spawned
@@ -40,6 +41,8 @@ void AVRPawn::BeginPlay()
 	//set tracking origin
 	//Note:: be sure to set this pawn to be auto-possessed by player 0!
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
+
+	//SetScale(2.0);
 }
 
 // Called every frame
@@ -74,6 +77,15 @@ void AVRPawn::TeleportTo(const FVector& newPos) {
 		//TODO: set camera fade time
 		SetActorLocation(newPos);
 	}
+}
+
+/**
+ * Set the size of this VR pawn. Affects movement speed.
+ * @param newScale the new size to uniformly scale the pawn
+ */
+void AVRPawn::SetScale(float newScale) {
+	root->SetRelativeScale3D(FVector(newScale, newScale, newScale));
+	//SetActorScale3D(FVector(newScale,newScale,newScale));
 }
 
 /// ================================= PlayerInput wrapping functions ================================
