@@ -77,6 +77,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UMGDecreaseSize();
 
+	//menu button
+	void OnMenu();
+
 private:
 	float currentSize = 1.0;
 };

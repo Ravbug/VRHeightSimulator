@@ -30,6 +30,7 @@ AVRPawn::AVRPawn()
 	UIWidget->SetRelativeScale3D(FVector(0.2,0.2,0.2));
 	UIWidget->SetRelativeLocation(FVector(320,0,70));
 	UIWidget->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0,0,180)));
+	UIWidget->SetVisibility(false);
 
 	//Set the input source for the left and right hands
 	LeftHandController->Init("Left");
@@ -43,6 +44,8 @@ AVRPawn::AVRPawn()
 void AVRPawn::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UIWidget->SetVisibility(false);
 
 	//set tracking origin
 	//Note:: be sure to set this pawn to be auto-possessed by player 0!
@@ -76,6 +79,8 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("TeleportRight", IE_Pressed, this, &AVRPawn::VRControllerRequestTeleportRight);
 	PlayerInputComponent->BindAction("TeleportLeft", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportLeft);
 	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
+
+	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &AVRPawn::OnMenu);
 }
 
 /**
@@ -96,6 +101,10 @@ void AVRPawn::TeleportTo(const FVector& newPos) {
 void AVRPawn::SetScale(float newScale) {
 	root->SetRelativeScale3D(FVector(newScale, newScale, newScale));
 	//SetActorScale3D(FVector(newScale,newScale,newScale));
+}
+
+void AVRPawn::OnMenu() {
+	UIWidget->SetVisibility(!UIWidget->bVisible);
 }
 
 /// ================================= PlayerInput wrapping functions ================================
