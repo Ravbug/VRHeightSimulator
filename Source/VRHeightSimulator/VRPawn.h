@@ -8,7 +8,6 @@
 #include "MotionControllerComponent.h"
 #include "Components/BoxComponent.h"
 #include "VRController.h"
-#include "HUDActor.h"
 #include "Components/WidgetComponent.h"
 #include "VRPawn.generated.h"
 
