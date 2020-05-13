@@ -28,24 +28,24 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadOnly)
+		UCameraComponent* Camera;
+
+	UPROPERTY(BlueprintReadOnly)
+		UVRController* LeftHandController;
+
+	UPROPERTY(BlueprintReadOnly)
+		UVRController* RightHandController;
+
+	UPROPERTY(BlueprintReadOnly)
+		UBoxComponent* root;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UCameraComponent* Camera;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UVRController* LeftHandController;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UVRController* RightHandController;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UBoxComponent* root;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* WebcamMesh;

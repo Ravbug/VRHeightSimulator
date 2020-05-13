@@ -108,7 +108,10 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AVRPawn::TeleportTo(const FVector& newPos) {
 	if (newPos != FVector::ZeroVector) {
 		//TODO: set camera fade time
-		SetActorLocation(newPos);
+
+		//teleport center to correct spot by offsetting the camera
+		auto campos = Camera->GetRelativeLocation();
+		SetActorLocation(FVector(newPos.X - campos.X,newPos.Y - campos.Y, newPos.Z));
 	}
 }
 

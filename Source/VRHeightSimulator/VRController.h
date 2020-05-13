@@ -30,6 +30,13 @@ protected:
 	AActor* hoverActor = nullptr;
 	APawn* parentActor = Cast<APawn>(GetAttachmentRootActor());
 
+
+	UPROPERTY(BlueprintReadOnly)
+		UMotionControllerComponent* Controller;
+
+	UPROPERTY(BlueprintReadOnly)
+		UBoxComponent* ControllerDetect;
+
 	//cannot teleport to the origin
 	FVector teleportTarget = FVector::ZeroVector;
 
@@ -44,13 +51,7 @@ public:
 	//Be sure to call Init immediately after construction!
 	void Init(const FName& trackingSource);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UMotionControllerComponent* Controller;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UBoxComponent* ControllerDetect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadOnly)
 		//creates a laser-pointer to allow interaction with UI widget blueprints 
 		UWidgetInteractionComponent* WidgetInteraction;
 
