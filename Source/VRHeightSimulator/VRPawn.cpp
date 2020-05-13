@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "VRPawn.h"
 #include "Runtime/HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -9,6 +8,8 @@
 #include "NavFilters/NavigationQueryFilter.h"
 #include "InteractableObject.h"
 #include "DrawDebugHelpers.h"
+
+#define in_increment 1/2.54/12/2
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -62,6 +63,15 @@ void AVRPawn::BeginPlay()
 void AVRPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (UIWidget->IsVisible()) {
+		float distance = Camera->GetComponentLocation().Z - GetActorLocation().Z;
+		float inches = distance / 2.54;
+		float feet = inches / 12;
+		inches = (inches - ((int)feet * 12));
+
+		DisplayCurrentHeight(FString::Printf(TEXT("%d ft %d in / %f cm"),(int)feet,(int)inches,distance));
+	}
 }
 
 // Called to bind functionality to input
@@ -104,7 +114,7 @@ void AVRPawn::SetScale(float newScale) {
 }
 
 void AVRPawn::OnMenu() {
-	UIWidget->SetVisibility(!UIWidget->bVisible);
+	UIWidget->SetVisibility(!UIWidget->IsVisible());
 }
 
 /// ================================= PlayerInput wrapping functions ================================
@@ -143,13 +153,13 @@ void AVRPawn::VRControllerConfirmTeleportLeft() {
 void AVRPawn::UMGIncreaseSize()
 {
 	SCREENPRINT2("Increase size");
-	currentSize += 0.1;
+	currentSize += in_increment;
 	SetScale(currentSize);
 }
 
 void AVRPawn::UMGDecreaseSize()
 {
 	SCREENPRINT2("Decrease size");
-	currentSize -= 0.1;
+	currentSize -= in_increment;
 	SetScale(currentSize);
 }

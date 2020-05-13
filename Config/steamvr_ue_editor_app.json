@@ -2,7 +2,7 @@
 	"source": "UE",
 	"applications": [
 		{
-			"app_key": "application.generated.ue.virtual-reality-bp-game-template-11590370.ue4editor.exe",
+			"app_key": "application.generated.ue.virtual-reality-bp-game-template-11590370.ue4editor-win64-debuggame.exe",
 			"launch_type": "url",
 			"url": "steam://launch/",
 			"action_manifest_path": "C:/Users/Ravbug/Documents/Unreal Projects/VRHeightSimulator/Config/SteamVRBindings/steamvr_manifest.json",

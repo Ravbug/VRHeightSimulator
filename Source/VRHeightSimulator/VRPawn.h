@@ -54,6 +54,9 @@ public:
 	UFUNCTION()
 	void TeleportTo(const FVector& newPos);
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Actor")
+		void DisplayCurrentHeight(const FString& str);
+
 	void SetScale(float newScale);
 
 	//VR Controller input events
