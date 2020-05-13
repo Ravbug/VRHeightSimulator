@@ -48,6 +48,9 @@ public:
 	UBoxComponent* root;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UStaticMeshComponent* WebcamMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UWidgetComponent* UIWidget;
 
 	UFUNCTION()
@@ -81,6 +84,9 @@ public:
 
 	//menu button
 	void OnMenu();
+
+	//grip button
+	void OnGrip();
 
 private:
 	float currentSize = 1.0;

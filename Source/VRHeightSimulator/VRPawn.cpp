@@ -33,6 +33,12 @@ AVRPawn::AVRPawn()
 	UIWidget->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0,0,180)));
 	UIWidget->SetVisibility(false);
 
+	WebcamMesh = CreateDefaultSubobject<UStaticMeshComponent>("Webcam Mesh");
+	WebcamMesh->SetupAttachment(Camera);
+	WebcamMesh->SetRelativeLocation(FVector(590,0,0));
+	WebcamMesh->SetRelativeScale3D(FVector(50,50,50));
+	WebcamMesh->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0,180,90)));
+
 	//Set the input source for the left and right hands
 	LeftHandController->Init("Left");
 	RightHandController->Init("Right");
@@ -47,6 +53,7 @@ void AVRPawn::BeginPlay()
 	Super::BeginPlay();
 
 	UIWidget->SetVisibility(false);
+	WebcamMesh->SetVisibility(false, true);
 
 	//set tracking origin
 	//Note:: be sure to set this pawn to be auto-possessed by player 0!
@@ -91,6 +98,7 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("TeleportRight", IE_Released, this, &AVRPawn::VRControllerConfirmTeleportRight);
 
 	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &AVRPawn::OnMenu);
+	PlayerInputComponent->BindAction("ShowCameras", IE_Pressed, this, &AVRPawn::OnGrip);
 }
 
 /**
@@ -114,7 +122,11 @@ void AVRPawn::SetScale(float newScale) {
 }
 
 void AVRPawn::OnMenu() {
-	UIWidget->SetVisibility(!UIWidget->IsVisible());
+	UIWidget->SetVisibility(!UIWidget->IsVisible(),true);
+}
+
+void AVRPawn::OnGrip() {
+	WebcamMesh->SetVisibility(!WebcamMesh->IsVisible(),true);
 }
 
 /// ================================= PlayerInput wrapping functions ================================
