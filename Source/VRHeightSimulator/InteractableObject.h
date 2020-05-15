@@ -28,8 +28,8 @@ public:
 	UStaticMeshComponent* rootMesh;
 
 	//for interacting with this physics object
-	void PickUp(USceneComponent* newParent);
-	void Release();
+	virtual void PickUp(USceneComponent* newParent);
+	virtual void Release();
 
 	void SetHighlightStatus(bool newStatus);
 
