@@ -16,14 +16,18 @@ class VRHEIGHTSIMULATOR_API AToggleableObject : public AInteractableObject
 public:
 	void PickUp(USceneComponent* newParent) override;
 
-	//release does nothing because these objects cannot be picked up
-	void Release() override {}
+	//Release only functions if the object can be picked up
+	void Release() override {
+		if (isPickupable) {
+			Super::Release();
+		}
+	}
 
 	/**
 	Set the state of this object
 	@param the new state
 	*/
-	void SetState(bool newState) {
+	virtual void SetState(bool newState) {
 		state = newState;
 
 		switch (state) {
@@ -43,6 +47,9 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void OnFalseState();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool isPickupable = false;
 
 private:
 	bool state = false;

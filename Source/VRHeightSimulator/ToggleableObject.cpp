@@ -5,4 +5,8 @@
 
 void AToggleableObject::PickUp(USceneComponent* newParent) {
 	SetState(!GetState());
+
+	if (isPickupable) {
+		Super::PickUp(newParent);
+	}
 }
