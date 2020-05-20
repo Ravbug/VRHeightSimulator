@@ -3,6 +3,7 @@
 #include "VRPawn.h"
 #include "Runtime/HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "AI/NavigationSystemBase.h"
 #include "NavigationSystem.h"
 #include "NavFilters/NavigationQueryFilter.h"
@@ -58,12 +59,6 @@ void AVRPawn::BeginPlay()
 	//set tracking origin
 	//Note:: be sure to set this pawn to be auto-possessed by player 0!
 	UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
-
-	//bind hud events
-	/*HudActor->IncrementSizeEvt.AddDynamic(this, &AVRPawn::UMGIncreaseSize);
-	HudActor->DecrementSizeEvt.AddDynamic(this, &AVRPawn::UMGDecreaseSize);*/
-
-	//SetScale(2.0);
 }
 
 // Called every frame
@@ -77,7 +72,7 @@ void AVRPawn::Tick(float DeltaTime)
 		float feet = inches / 12;
 		inches = (inches - ((int)feet * 12));
 
-		DisplayCurrentHeight(FString::Printf(TEXT("%d ft %d in / %f cm"),(int)feet,(int)inches,distance));
+		DisplayCurrentHeight(FString::Printf(TEXT("%d ft %d in / %d cm"),(int)feet,(int)inches,(int)distance));
 	}
 }
 
@@ -120,8 +115,11 @@ void AVRPawn::TeleportTo(const FVector& newPos) {
  * @param newScale the new size to uniformly scale the pawn
  */
 void AVRPawn::SetScale(float newScale) {
+	//drop object that is in hand
+	VRControllerReleaseRight();
+	VRControllerReleaseLeft();
+
 	root->SetRelativeScale3D(FVector(newScale, newScale, newScale));
-	//SetActorScale3D(FVector(newScale,newScale,newScale));
 }
 
 void AVRPawn::OnMenu() {
@@ -165,16 +163,29 @@ void AVRPawn::VRControllerConfirmTeleportLeft() {
 
 /// ================================== UMG Events =====================================
 
+/**
+ * Increase the size of the pawn by approximately 1 inch
+ */
 void AVRPawn::UMGIncreaseSize()
 {
-	SCREENPRINT2("Increase size");
 	currentSize += in_increment;
 	SetScale(currentSize);
 }
 
+/**
+ * Decrease the size of the pawn by approximately 1 inch
+ */
 void AVRPawn::UMGDecreaseSize()
 {
-	SCREENPRINT2("Decrease size");
 	currentSize -= in_increment;
+	SetScale(currentSize);
+}
+
+/**
+ * Set the size of the pawn in float
+ */
+void AVRPawn::UMGSetHeightPercent(float percent)
+{
+	currentSize = UKismetMathLibrary::MapRangeClamped(percent,0,1,minSlider,maxSlider);
 	SetScale(currentSize);
 }

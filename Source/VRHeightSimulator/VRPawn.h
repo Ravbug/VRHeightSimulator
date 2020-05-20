@@ -82,12 +82,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UMGDecreaseSize();
 
+	UFUNCTION(BlueprintCallable)
+	void UMGSetHeightPercent(float percent);
+
 	//menu button
 	void OnMenu();
 
 	//grip button
 	void OnGrip();
 
-private:
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	float maxSlider = 1.5;
+	UPROPERTY(BlueprintReadOnly)
+	float minSlider = 0.5;
+	UPROPERTY(BlueprintReadOnly)
 	float currentSize = 1.0;
 };
