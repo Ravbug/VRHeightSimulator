@@ -11,6 +11,9 @@ AInteractableObject::AInteractableObject()
 
 	rootMesh = CreateDefaultSubobject<UStaticMeshComponent>("Root Mesh");
 	RootComponent = rootMesh;
+
+	InteractionLabel_A = CreateDefaultSubobject<UWidgetComponent>("InstructionLabel");
+	InteractionLabel_A->SetupAttachment(rootMesh);
 }
 
 // Called when the game starts or when spawned

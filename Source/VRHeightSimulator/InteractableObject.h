@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
 #include "InteractableObject.generated.h"
 
 UCLASS()
@@ -27,10 +28,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SimpleDisplay)
 	UStaticMeshComponent* rootMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UWidgetComponent* InteractionLabel_A;
+
 	//for interacting with this physics object
 	virtual void PickUp(USceneComponent* newParent);
 	virtual void Release();
 
-	void SetHighlightStatus(bool newStatus);
+	virtual void SetHighlightStatus(bool newStatus);
 
 };

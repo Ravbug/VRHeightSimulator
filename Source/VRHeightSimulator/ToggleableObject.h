@@ -14,6 +14,11 @@ class VRHEIGHTSIMULATOR_API AToggleableObject : public AInteractableObject
 {
 	GENERATED_BODY()
 public:
+	AToggleableObject();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UWidgetComponent* InteractionLabel_B;
+
 	void PickUp(USceneComponent* newParent) override;
 
 	//Release only functions if the object can be picked up
@@ -38,8 +43,14 @@ public:
 		}
 	}
 
+	virtual void Interact() {
+		SetState(!GetState());
+	}
+
 	UFUNCTION(BlueprintCallable)
 		bool GetState() { return state; }
+
+	void SetHighlightStatus(bool newState) override;
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent)
@@ -51,6 +62,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool isPickupable = false;
 
-private:
+	UFUNCTION(BlueprintImplementableEvent)
+		void HighlightChange(bool newState);
+
+protected:
 	bool state = false;
 };

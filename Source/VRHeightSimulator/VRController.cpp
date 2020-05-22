@@ -2,6 +2,7 @@
 
 
 #include "VRController.h"
+#include "ToggleableObject.h"
 #include "Kismet/GameplayStatics.h"
 #include "AI/NavigationSystemBase.h"
 #include "NavigationSystem.h"
@@ -9,6 +10,14 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/HUD.h"
 #include "InteractableObject.h"
+
+AToggleableObject* castToToggleable(AActor* actor) {
+	AToggleableObject* tobj = nullptr;
+	if (actor != nullptr) {
+		tobj = Cast<AToggleableObject>(actor);
+	}
+	return tobj;
+}
 
 
 // Sets default values for this component's properties
@@ -84,7 +93,10 @@ void UVRController::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	//should try to teleport?
 	if (requestStatus == TeleportStatus::Request)
 	{
-		BeginTeleport();
+		//is this object a controller?
+		if (castToToggleable(hoverActor) == nullptr) {
+			BeginTeleport();
+		}
 	}
 	//teleport was confirmed? Notify VRPawn
 	else if (requestStatus == TeleportStatus::Confirm) {
@@ -196,5 +208,26 @@ void UVRController::BeginTeleport()
 	else {
 		teleportTarget = FVector::ZeroVector;
 		ConnectPointsWithLine(OutPath, FColor::Red);
+	}
+}
+
+void UVRController::RequestTeleport() {
+	auto casted = castToToggleable(hoverActor);
+	if (casted != nullptr) {
+		requestStatus = TeleportStatus::None;
+		casted->Interact();
+	}
+	else {
+		requestStatus = TeleportStatus::Request;
+	}
+}
+
+void UVRController::ConfirmTeleport() {
+	auto casted = castToToggleable(hoverActor);
+	if (casted != nullptr) {
+		requestStatus = TeleportStatus::None;
+	}
+	else {
+		requestStatus = TeleportStatus::Confirm;
 	}
 }

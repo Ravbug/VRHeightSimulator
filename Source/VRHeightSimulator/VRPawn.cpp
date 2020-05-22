@@ -33,6 +33,7 @@ AVRPawn::AVRPawn()
 	UIWidget->SetRelativeLocation(FVector(320,0,70));
 	UIWidget->SetRelativeRotation(FQuat::MakeFromEuler(FVector(0,0,180)));
 	UIWidget->SetVisibility(false);
+	UIWidget->SetBlendMode(EWidgetBlendMode::Transparent);
 
 	WebcamMesh = CreateDefaultSubobject<UStaticMeshComponent>("Webcam Mesh");
 	WebcamMesh->SetupAttachment(Camera);

@@ -68,18 +68,14 @@ public:
 	enum TeleportStatus { None, Request, Confirm };
 	TeleportStatus requestStatus = TeleportStatus::None;
 
-	void RequestTeleport() {
-		requestStatus = TeleportStatus::Request;
-	}
+	void RequestTeleport();
 
-	void ConfirmTeleport() {
-		requestStatus = TeleportStatus::Confirm;
-	}
-
-	FVector TeleportTarget = FVector::ZeroVector;
+	void ConfirmTeleport();
 
 	//declare delegate for teleportation
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnTeleport Teleport;
 
+protected:
+	FVector TeleportTarget = FVector::ZeroVector;
 };
