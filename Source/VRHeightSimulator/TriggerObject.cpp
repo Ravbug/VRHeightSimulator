@@ -10,3 +10,13 @@ void ATriggerObject::SetState(bool newState) {
 		obj->SetState(newState);
 	}
 }
+
+void ATriggerObject::SetHighlightStatus(bool newStatus)
+{
+	Super::SetHighlightStatus(newStatus);
+
+	//also highlight child objects
+	for (const auto& obj : outputs) {
+		obj->SetHighlightStatus(newStatus);
+	}
+}

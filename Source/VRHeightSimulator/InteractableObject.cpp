@@ -14,6 +14,7 @@ AInteractableObject::AInteractableObject()
 
 	InteractionLabel_A = CreateDefaultSubobject<UWidgetComponent>("InstructionLabel");
 	InteractionLabel_A->SetupAttachment(rootMesh);
+	//InteractionLabel_A->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 // Called when the game starts or when spawned

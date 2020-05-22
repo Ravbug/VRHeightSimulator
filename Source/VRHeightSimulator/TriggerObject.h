@@ -18,4 +18,6 @@ public:
     TArray<AToggleableObject*> outputs;
 
     void SetState(bool newState) override;
+
+    void SetHighlightStatus(bool newStatus) override;
 };

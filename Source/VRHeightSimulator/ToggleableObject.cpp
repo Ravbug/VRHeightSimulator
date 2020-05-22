@@ -7,6 +7,7 @@
 AToggleableObject::AToggleableObject() {
 	InteractionLabel_B = CreateDefaultSubobject<UWidgetComponent>("Interaction Label");
 	InteractionLabel_B->SetupAttachment(rootMesh);
+	//InteractionLabel_B->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void AToggleableObject::PickUp(USceneComponent* newParent) {
