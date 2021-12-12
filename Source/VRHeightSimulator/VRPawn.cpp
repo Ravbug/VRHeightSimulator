@@ -10,7 +10,7 @@
 #include "InteractableObject.h"
 #include "DrawDebugHelpers.h"
 
-#define in_increment 1/2.54/12/2
+constexpr static float in_increment = 1 / 2.54 / 12 / 2;
 
 // Sets default values
 AVRPawn::AVRPawn()
@@ -97,6 +97,18 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &AVRPawn::OnMenu);
 	PlayerInputComponent->BindAction("ShowCameras", IE_Pressed, this, &AVRPawn::OnGrip);
+
+	//setup kb/mouse controls only if the system running the game does not have VR connected
+	if (!UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayConnected()) {
+		PlayerInputComponent->BindAxis("KeyboardFB", this, &AVRPawn::KeyboardMoveFD);
+		PlayerInputComponent->BindAxis("KeyboardLR", this, &AVRPawn::KeyboardMoveLR);
+		PlayerInputComponent->BindAxis("MouseLookLR", this, &AVRPawn::MouseLookLR);
+		PlayerInputComponent->BindAxis("MouseLookUD", this, &AVRPawn::MouseLookUD);
+
+		SetActorLocation(GetActorLocation() + FVector(0,1.8,0));	// keyboard mode has a starting height of 1.8M, which is around average for human male
+
+		// put one of the controllers out in front of the player
+	}	
 }
 
 /**
@@ -164,6 +176,23 @@ void AVRPawn::VRControllerConfirmTeleportLeft() {
 	LeftHandController->ConfirmTeleport();
 }
 
+void AVRPawn::KeyboardMoveFD(float amt) {
+	SetActorLocation(GetActorLocation() + GetActorForwardVector() * amt);
+}
+
+void AVRPawn::KeyboardMoveLR(float amt) {
+	SetActorLocation(GetActorLocation() + GetActorRightVector() * amt);
+}
+
+void AVRPawn::MouseLookLR(float amt) {
+	SetActorRotation(GetActorForwardVector().RotateAngleAxis(amt, FVector::UpVector).Rotation());
+
+}
+
+void AVRPawn::MouseLookUD(float amt)
+{
+	SetActorRotation(GetActorForwardVector().RotateAngleAxis(amt, FVector::LeftVector).Rotation());
+}
 /// ================================== UMG Events =====================================
 
 /**

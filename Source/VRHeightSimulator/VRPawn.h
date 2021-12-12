@@ -75,6 +75,12 @@ public:
 	void VRControllerConfirmTeleportRight();
 	void VRControllerConfirmTeleportLeft();
 
+	void KeyboardMoveFD(float amt);
+	void KeyboardMoveLR(float amt);
+	void MouseLookLR(float amt);
+	void MouseLookUD(float amt);
+
+
 	//UMG events
 	UFUNCTION(BlueprintCallable)
 	void UMGIncreaseSize();
