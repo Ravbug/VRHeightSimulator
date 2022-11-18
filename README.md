@@ -13,7 +13,7 @@ This is currently an early work in progress.
 ## System requirements
 1) A VR System, optionally with a camera for AR Mode (Tested with the Vive Pro)
 2) A computer with SteamVR support
-3) Unreal Engine 4.24.3 or later
+3) Unreal Engine 5.1 or later
 
 ## How to try it
 As of right now, there is no precompiled binary. You will need to build the project from source
